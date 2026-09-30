@@ -1,10 +1,10 @@
 {
-  "name": "pi-me-jump-mode",
-  "repository": { "type": "git", "url": "git+https://github.com/vimhead/pi-me-jump-mode.git" },
-  "homepage": "https://github.com/vimhead/pi-me-jump-mode#readme",
-  "bugs": { "url": "https://github.com/vimhead/pi-me-jump-mode/issues" },
+  "name": "vipir-jump",
+  "repository": { "type": "git", "url": "git+https://github.com/vimhead/vipir-jump.git" },
+  "homepage": "https://github.com/vimhead/vipir-jump#readme",
+  "bugs": { "url": "https://github.com/vimhead/vipir-jump/issues" },
   "version": "0.1.0",
-  "description": "Jump mode plugin for vipi-editor.",
+  "description": "Jump mode plugin for vipir-editor.",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -19,11 +19,11 @@
   ],
   "pi": {
     "extensions": [
-      "./extensions/pi-me-jump-mode/index.ts"
+      "./extensions/vipir-jump/index.ts"
     ]
   },
   "dependencies": {
-    "vipi-editor": "git+https://github.com/vimhead/vipi-editor.git"
+    "vipir-editor": "git+https://github.com/vimhead/vipir-editor.git"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",

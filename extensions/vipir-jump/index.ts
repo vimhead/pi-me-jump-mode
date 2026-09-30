@@ -2,15 +2,15 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { matchesKey, sliceByColumn, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import {
 	buildRenderedLineMaps,
-	defineVipiEditorExtension,
-	registerVipiEditorExtension,
+	defineVipirEditorExtension,
+	registerVipirEditorExtension,
 	getPrintableInput,
 	normalizeRange,
 	type PromptEditor,
-	type VipiEditorPosition,
-	type VipiEditorRenderedLineMap,
-	type VipiEditorTextRange,
-} from "vipi-editor/api";
+	type VipirEditorPosition,
+	type VipirEditorRenderedLineMap,
+	type VipirEditorTextRange,
+} from "vipir-editor/api";
 
 type JumpMatch = {
 	line: number;
@@ -23,7 +23,7 @@ type JumpState = {
 	pattern: string;
 	matches: JumpMatch[];
 	labels: Map<string, JumpMatch>;
-	visibleRanges: VipiEditorTextRange[];
+	visibleRanges: VipirEditorTextRange[];
 	target?: JumpMatch;
 };
 
@@ -31,7 +31,7 @@ type RenderJumpSegmentOptions = {
 	editor: PromptEditor;
 	segment: string;
 	matches: JumpMatch[];
-	map: VipiEditorRenderedLineMap;
+	map: VipirEditorRenderedLineMap;
 	suffixWidth: number;
 	width: number;
 };
@@ -43,11 +43,11 @@ const JUMP_LABELS = `${PRIMARY_JUMP_LABELS}${FALLBACK_JUMP_LABELS}`;
 const jumpStates = new WeakMap<PromptEditor, JumpState>();
 
 export default function registerPlugin(pi: ExtensionAPI): void {
-	registerVipiEditorExtension(pi, registration);
+	registerVipirEditorExtension(pi, registration);
 }
 
-export const registration = defineVipiEditorExtension({
-	extensionId: "pi-me-jump-mode",
+export const registration = defineVipirEditorExtension({
+	extensionId: "vipir-jump",
 	setup(api) {
 		api.vim.registerMode({
 			id: JUMP_MODE_ID,
@@ -135,7 +135,7 @@ function createJumpState(editor: PromptEditor, pattern: string): JumpState {
 	};
 }
 
-function computeJumpMatches(editor: PromptEditor, pattern: string, visibleRanges: VipiEditorTextRange[]): JumpMatch[] {
+function computeJumpMatches(editor: PromptEditor, pattern: string, visibleRanges: VipirEditorTextRange[]): JumpMatch[] {
 	if (pattern.length === 0) return [];
 
 	const cursor = editor.getCursor();
@@ -258,11 +258,11 @@ function renderJumpSegment(options: RenderJumpSegmentOptions): { text: string; s
 	return { text: result, suffixSkip };
 }
 
-function jumpDistance(cursor: VipiEditorPosition, match: JumpMatch): number {
+function jumpDistance(cursor: VipirEditorPosition, match: JumpMatch): number {
 	return Math.abs(cursor.line - match.line) * 10_000 + Math.abs(cursor.col - match.col);
 }
 
-function rangeContainsMatch(range: VipiEditorTextRange, match: JumpMatch): boolean {
+function rangeContainsMatch(range: VipirEditorTextRange, match: JumpMatch): boolean {
 	const [start, end] = normalizeRange(range);
 	return match.line === start.line && match.line === end.line && match.col >= start.col && match.endCol <= end.col;
 }
