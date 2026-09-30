@@ -5,7 +5,7 @@ Jump to visible prompt text using highlighted labels.
 ## Install
 
 ```sh
-pi install git:github.com/vimhead/pi-me
+pi install git:github.com/vimhead/vipi-editor
 pi install git:github.com/vimhead/pi-me-jump-mode
 ```
 

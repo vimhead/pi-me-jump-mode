@@ -2,15 +2,15 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { matchesKey, sliceByColumn, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import {
 	buildRenderedLineMaps,
-	definePiMeExtension,
+	defineVipiEditorExtension,
+	registerVipiEditorExtension,
 	getPrintableInput,
 	normalizeRange,
-	registerPiMeExtension,
-	type PiMeEditor,
-	type PiMePosition,
-	type PiMeRenderedLineMap,
-	type PiMeTextRange,
-} from "pi-me/api";
+	type PromptEditor,
+	type VipiEditorPosition,
+	type VipiEditorRenderedLineMap,
+	type VipiEditorTextRange,
+} from "vipi-editor/api";
 
 type JumpMatch = {
 	line: number;
@@ -23,15 +23,15 @@ type JumpState = {
 	pattern: string;
 	matches: JumpMatch[];
 	labels: Map<string, JumpMatch>;
-	visibleRanges: PiMeTextRange[];
+	visibleRanges: VipiEditorTextRange[];
 	target?: JumpMatch;
 };
 
 type RenderJumpSegmentOptions = {
-	editor: PiMeEditor;
+	editor: PromptEditor;
 	segment: string;
 	matches: JumpMatch[];
-	map: PiMeRenderedLineMap;
+	map: VipiEditorRenderedLineMap;
 	suffixWidth: number;
 	width: number;
 };
@@ -40,9 +40,13 @@ const JUMP_MODE_ID = "jump";
 const PRIMARY_JUMP_LABELS = "asdfghjklqwertyuiopzxcvbnm";
 const FALLBACK_JUMP_LABELS = PRIMARY_JUMP_LABELS.toUpperCase();
 const JUMP_LABELS = `${PRIMARY_JUMP_LABELS}${FALLBACK_JUMP_LABELS}`;
-const jumpStates = new WeakMap<PiMeEditor, JumpState>();
+const jumpStates = new WeakMap<PromptEditor, JumpState>();
 
-const registration = definePiMeExtension({
+export default function registerPlugin(pi: ExtensionAPI): void {
+	registerVipiEditorExtension(pi, registration);
+}
+
+export const registration = defineVipiEditorExtension({
 	extensionId: "pi-me-jump-mode",
 	setup(api) {
 		api.vim.registerMode({
@@ -75,11 +79,8 @@ const registration = definePiMeExtension({
 	},
 });
 
-export default function piMeJumpMode(pi: ExtensionAPI) {
-	registerPiMeExtension(pi, registration);
-}
 
-function handleJumpInput(editor: PiMeEditor, input: string): boolean {
+function handleJumpInput(editor: PromptEditor, input: string): boolean {
 	if (matchesKey(input, "escape")) {
 		editor.setMode("normal");
 		return true;
@@ -122,7 +123,7 @@ function handleJumpInput(editor: PiMeEditor, input: string): boolean {
 	return true;
 }
 
-function createJumpState(editor: PiMeEditor, pattern: string): JumpState {
+function createJumpState(editor: PromptEditor, pattern: string): JumpState {
 	const previousVisibleRanges = jumpStates.get(editor)?.visibleRanges ?? [];
 	const matches = assignJumpLabels(editor, pattern, computeJumpMatches(editor, pattern, previousVisibleRanges));
 	return {
@@ -134,7 +135,7 @@ function createJumpState(editor: PiMeEditor, pattern: string): JumpState {
 	};
 }
 
-function computeJumpMatches(editor: PiMeEditor, pattern: string, visibleRanges: PiMeTextRange[]): JumpMatch[] {
+function computeJumpMatches(editor: PromptEditor, pattern: string, visibleRanges: VipiEditorTextRange[]): JumpMatch[] {
 	if (pattern.length === 0) return [];
 
 	const cursor = editor.getCursor();
@@ -159,7 +160,7 @@ function computeJumpMatches(editor: PiMeEditor, pattern: string, visibleRanges: 
 	});
 }
 
-function assignJumpLabels(editor: PiMeEditor, pattern: string, matches: JumpMatch[]): JumpMatch[] {
+function assignJumpLabels(editor: PromptEditor, pattern: string, matches: JumpMatch[]): JumpMatch[] {
 	const labels = [...JUMP_LABELS].filter((label) => !jumpLabelConflicts(editor, pattern, label));
 	return matches.map((match) => {
 		const label = labels.shift();
@@ -167,17 +168,17 @@ function assignJumpLabels(editor: PiMeEditor, pattern: string, matches: JumpMatc
 	});
 }
 
-function jumpLabelConflicts(editor: PiMeEditor, pattern: string, label: string): boolean {
+function jumpLabelConflicts(editor: PromptEditor, pattern: string, label: string): boolean {
 	if (pattern.length === 0) return false;
 	const conflictingPattern = `${pattern}${label}`.toLowerCase();
 	return editor.getLines().some((line) => line.toLowerCase().includes(conflictingPattern));
 }
 
-function jumpToMatch(editor: PiMeEditor, match: JumpMatch): void {
+function jumpToMatch(editor: PromptEditor, match: JumpMatch): void {
 	editor.moveToPosition({ line: match.line, col: match.col });
 }
 
-function renderJumpOverlay(editor: PiMeEditor, lines: string[], width: number): string[] {
+function renderJumpOverlay(editor: PromptEditor, lines: string[], width: number): string[] {
 	const theme = editor.getTheme();
 	const state = jumpStates.get(editor);
 	const result = [...lines];
@@ -257,11 +258,11 @@ function renderJumpSegment(options: RenderJumpSegmentOptions): { text: string; s
 	return { text: result, suffixSkip };
 }
 
-function jumpDistance(cursor: PiMePosition, match: JumpMatch): number {
+function jumpDistance(cursor: VipiEditorPosition, match: JumpMatch): number {
 	return Math.abs(cursor.line - match.line) * 10_000 + Math.abs(cursor.col - match.col);
 }
 
-function rangeContainsMatch(range: PiMeTextRange, match: JumpMatch): boolean {
+function rangeContainsMatch(range: VipiEditorTextRange, match: JumpMatch): boolean {
 	const [start, end] = normalizeRange(range);
 	return match.line === start.line && match.line === end.line && match.col >= start.col && match.endCol <= end.col;
 }
