@@ -1,4 +1,4 @@
-# vipir-jump
+# vipir-jump-mode
 
 Jump to visible prompt text using highlighted labels.
 
@@ -6,7 +6,7 @@ Jump to visible prompt text using highlighted labels.
 
 ```sh
 pi install git:github.com/vimhead/vipir-editor
-pi install git:github.com/vimhead/vipir-jump
+pi install git:github.com/vimhead/vipir-jump-mode
 ```
 
 Run **`/reload`**. Enabled by default in [Vipir](https://github.com/vimhead/vipir).
@@ -19,4 +19,4 @@ Run **`/reload`**. Enabled by default in [Vipir](https://github.com/vimhead/vipi
 
 **Backspace** shortens the search. **Esc** cancels.
 
-Disable in `/vipir` and sync, or run `pi remove git:github.com/vimhead/vipir-jump` and reload.
+Disable in `/vipir` and sync, or run `pi remove git:github.com/vimhead/vipir-jump-mode` and reload.

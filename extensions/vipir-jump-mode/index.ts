@@ -47,7 +47,7 @@ export default function registerPlugin(pi: ExtensionAPI): void {
 }
 
 export const registration = defineVipirEditorExtension({
-	extensionId: "vipir-jump",
+	extensionId: "vipir-jump-mode",
 	setup(api) {
 		api.vim.registerMode({
 			id: JUMP_MODE_ID,

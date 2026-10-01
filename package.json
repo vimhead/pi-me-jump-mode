@@ -1,8 +1,8 @@
 {
-  "name": "vipir-jump",
-  "repository": { "type": "git", "url": "git+https://github.com/vimhead/vipir-jump.git" },
-  "homepage": "https://github.com/vimhead/vipir-jump#readme",
-  "bugs": { "url": "https://github.com/vimhead/vipir-jump/issues" },
+  "name": "vipir-jump-mode",
+  "repository": { "type": "git", "url": "git+https://github.com/vimhead/vipir-jump-mode.git" },
+  "homepage": "https://github.com/vimhead/vipir-jump-mode#readme",
+  "bugs": { "url": "https://github.com/vimhead/vipir-jump-mode/issues" },
   "version": "0.1.0",
   "description": "Jump mode plugin for vipir-editor.",
   "type": "module",
@@ -19,7 +19,7 @@
   ],
   "pi": {
     "extensions": [
-      "./extensions/vipir-jump/index.ts"
+      "./extensions/vipir-jump-mode/index.ts"
     ]
   },
   "dependencies": {

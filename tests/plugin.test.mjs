@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CURSOR_MARKER, visibleWidth } from "@earendil-works/pi-tui";
 import { createFixture } from "./fixture.mjs";
-import { registration as jumpRegistration } from "../extensions/vipir-jump/index.ts";
+import { registration as jumpRegistration } from "../extensions/vipir-jump-mode/index.ts";
 
 test("jump mode is registered on the coordinated prompt and returns to normal", context => {
   const fixture = createFixture(context, { registrations: [jumpRegistration] });
@@ -20,11 +20,11 @@ test("jump mode is registered on the coordinated prompt and returns to normal", 
 
 
 test("plugin registers with the shared vipir-editor runtime API", async () => {
-  const { default: registerPlugin, registration } = await import("../extensions/vipir-jump/index.ts");
+  const { default: registerPlugin, registration } = await import("../extensions/vipir-jump-mode/index.ts");
   const { VIPIR_EDITOR_REGISTER } = await import("vipir-editor/api");
   const events = [];
   registerPlugin({ events: { emit: (channel, data) => events.push({ channel, data }), on: () => () => {} } });
   assert.equal(events[0].channel, VIPIR_EDITOR_REGISTER);
   assert.equal(events[0].data, registration);
-  assert.equal(registration.extensionId, "vipir-jump");
+  assert.equal(registration.extensionId, "vipir-jump-mode");
 });
